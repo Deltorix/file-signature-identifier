@@ -3,6 +3,8 @@ use std::io::{self, Read};
 
 use clap::{Arg, Command};
 
+//test
+
 fn main() -> io::Result<()> {
     let matches = Command::new("File Signature Identifier")
         .version("0.0.1")
