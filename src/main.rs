@@ -1,11 +1,10 @@
+use std::collections::HashMap;
 use std::fs::File;
-use std::io::{self, Read};
+use std::io::{Read, Result};
 
 use clap::{Arg, Command};
 
-//test
-
-fn main() -> io::Result<()> {
+fn main() -> Result<()> {
     let matches = Command::new("File Signature Identifier")
         .version("0.0.1")
         .author("Isabelle <patchydev@proton.me")
@@ -20,23 +19,24 @@ fn main() -> io::Result<()> {
         .after_help("Author: Isabelle <patchydev@proton.me>")
         .get_matches();
 
+    let mut signatures: HashMap<Vec<u8>, &str> = HashMap::new();
+    signatures.insert(vec![0x89, 0x50, 0x4E, 0x47], "PNG Image");
+
     let file_path = matches.get_one::<String>("file").unwrap();
 
     let mut file = File::open(file_path)?;
 
     let mut buffer = [0u8; 8];
 
-    let bytes = file.read(&mut buffer)?;
+    file.read_exact(&mut buffer)?;
 
-    if bytes > 0 {
-        for byte in &buffer[..bytes] {
-            print!("0x{:02x} ", byte);
-        }
+    let file_type = signatures
+        .iter()
+        .find(|(sig, _)| buffer.starts_with(sig))
+        .map(|(_, name)| *name)
+        .unwrap_or("Unknown file type.");
 
-        println!();
-    } else {
-        println!("No bytes read");
-    }
+    println!("Detected file type: {}", file_type);
 
     Ok(())
 }
