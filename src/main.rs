@@ -28,7 +28,7 @@ fn main() -> io::Result<()> {
 
     if bytes > 0 {
         for byte in &buffer[..bytes] {
-            print!("{:02x}", byte);
+            print!("0x{:02x} ", byte);
         }
 
         println!();
