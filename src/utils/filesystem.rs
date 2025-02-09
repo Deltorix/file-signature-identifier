@@ -10,4 +10,4 @@ pub fn validate_file(file_path: &str) -> Result<(), String> {
     } else {
         Err(format!("{} is not a file or directory", file_path))
     }
-}    
+}

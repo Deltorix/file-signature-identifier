@@ -11,3 +11,10 @@ pub fn load_signatures() -> HashMap<Vec<u8>, &'static str> {
 
     signatures
 }
+
+pub fn check_signature<'a>(sig: &[u8], signatures: &'a HashMap<Vec<u8>, &'a str>) -> Option<&'a str> {
+    signatures
+        .iter()
+        .find(|(sigs, _)| sig.starts_with(sigs))
+        .map(|(_, name)| *name)
+}

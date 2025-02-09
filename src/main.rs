@@ -35,17 +35,13 @@ fn main() -> Result<()> {
 
     let mut file = File::open(file_path)?;
 
-    let mut buffer = [0u8; 8];
+    let mut buffer = [0u8; 10];
 
     file.read_exact(&mut buffer)?;
 
-    let file_type = sigs
-        .iter()
-        .find(|(sig, _)| buffer.starts_with(sig))
-        .map(|(_, name)| *name)
-        .unwrap_or("Unknown file type.");
+    let file_type = signatures::check_signature(&buffer, &sigs);
 
-    println!("Detected file type: {}", file_type);
+    println!("Detected file type: {:?}", file_type);
 
     Ok(())
 }
