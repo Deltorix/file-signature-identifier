@@ -21,7 +21,7 @@ fn main() -> Result<()> {
                 .help("The file to identify type of")
                 .required(true),
         )
-        .after_help("Author: Isabelle <patchydev@proton.me>")
+        .after_help("Credits: Isabelle <patchydev@proton.me>")
         .get_matches();
 
     let file_path = matches.get_one::<String>("file").unwrap();
@@ -41,7 +41,7 @@ fn main() -> Result<()> {
 
     let file_type = signatures::check_signature(&buffer, &sigs);
 
-    println!("Detected file type: {:?}", file_type);
+    println!("Detected file type: {}", file_type.unwrap_or("Unknown file type"));
 
     Ok(())
 }
