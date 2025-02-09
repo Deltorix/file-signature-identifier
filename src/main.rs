@@ -1,8 +1,13 @@
-use std::collections::HashMap;
+mod utils;
+
 use std::fs::File;
 use std::io::{Read, Result};
-
+use std::process;
 use clap::{Arg, Command};
+
+use utils::signatures;
+use utils::filesystem;
+
 
 fn main() -> Result<()> {
     let matches = Command::new("File Signature Identifier")
@@ -19,10 +24,14 @@ fn main() -> Result<()> {
         .after_help("Author: Isabelle <patchydev@proton.me>")
         .get_matches();
 
-    let mut signatures: HashMap<Vec<u8>, &str> = HashMap::new();
-    signatures.insert(vec![0x89, 0x50, 0x4E, 0x47], "PNG Image");
-
     let file_path = matches.get_one::<String>("file").unwrap();
+
+    if filesystem::validate_file(file_path).is_err() {
+        println!("{}", filesystem::validate_file(file_path).unwrap_err());
+        process::exit(1);
+    }
+
+    let sigs = signatures::load_signatures();
 
     let mut file = File::open(file_path)?;
 
@@ -30,7 +39,7 @@ fn main() -> Result<()> {
 
     file.read_exact(&mut buffer)?;
 
-    let file_type = signatures
+    let file_type = sigs
         .iter()
         .find(|(sig, _)| buffer.starts_with(sig))
         .map(|(_, name)| *name)
